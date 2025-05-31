@@ -29,6 +29,7 @@ PKG_CONFIG_DEPENDS:= \
 	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Rust_Server \
 	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Simple_Obfs \
 	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_V2ray_Plugin \
+	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Xray_Plugin \
 	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_ShadowsocksR_Libev_Client \
 	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_ShadowsocksR_Libev_Server \
 	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Trojan
@@ -62,6 +63,7 @@ LUCI_DEPENDS:= \
 	+PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Rust_Server:shadowsocks-rust-ssserver \
 	+PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Simple_Obfs:simple-obfs \
 	+PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_V2ray_Plugin:v2ray-plugin \
+	+PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Xray_Plugin:xray-plugin \
 	+PACKAGE_$(PKG_NAME)_INCLUDE_ShadowsocksR_Libev_Client:shadowsocksr-libev-ssr-local \
 	+PACKAGE_$(PKG_NAME)_INCLUDE_ShadowsocksR_Libev_Client:shadowsocksr-libev-ssr-redir \
 	+PACKAGE_$(PKG_NAME)_INCLUDE_ShadowsocksR_Libev_Server:shadowsocksr-libev-ssr-server \
@@ -73,7 +75,7 @@ select PACKAGE_luci-lib-ipkg if PACKAGE_$(PKG_NAME)
 
 choice
 	prompt "Shadowsocks Client Selection"
-	default PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Rust_Client if aarch64 || x86_64
+	default PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Rust_Client if aarch64||arm||i386||mips||mipsel||x86_64
 	default PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Libev_Client
 
 	config PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_NONE_Client
@@ -90,8 +92,8 @@ endchoice
 
 choice
 	prompt "Shadowsocks Server Selection"
-	default PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Rust_Server if aarch64
-	default PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Libev_Server if i386||x86_64||arm
+	default PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Rust_Server if aarch64||arm||i386||mips||mipsel||x86_64
+	default PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Libev_Server
 	default PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_NONE_Server
 
 	config PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_NONE_Server
@@ -139,7 +141,7 @@ config PACKAGE_$(PKG_NAME)_INCLUDE_DNSPROXY
 
 config PACKAGE_$(PKG_NAME)_INCLUDE_MosDNS
 	bool "Include MosDNS"
-	default y if aarch64||arm||i386||x86_64
+	default n
 
 config PACKAGE_$(PKG_NAME)_INCLUDE_Hysteria
 	bool "Include Hysteria"
@@ -185,6 +187,10 @@ config PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Simple_Obfs
 
 config PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_V2ray_Plugin
 	bool "Include Shadowsocks V2ray Plugin"
+	default n
+
+config PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Xray_Plugin
+	bool "Include Shadowsocks Xray Plugin"
 	default n
 
 config PACKAGE_$(PKG_NAME)_INCLUDE_ShadowsocksR_Libev_Client

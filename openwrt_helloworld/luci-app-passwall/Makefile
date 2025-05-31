@@ -67,7 +67,7 @@ config PACKAGE_$(PKG_NAME)_Nftables_Transparent_Proxy
 config PACKAGE_$(PKG_NAME)_INCLUDE_Geoview
 	bool "Include Geoview"
 	select PACKAGE_geoview
-	default y if aarch64||arm||i386||x86_64
+	default n
 
 config PACKAGE_$(PKG_NAME)_INCLUDE_Haproxy
 	bool "Include Haproxy"
@@ -177,7 +177,6 @@ define Package/$(PKG_NAME)/conffiles
 /usr/share/passwall/rules/lanlist_ipv4
 /usr/share/passwall/rules/lanlist_ipv6
 /usr/share/passwall/rules/domains_excluded
-/www/luci-static/resources/qrcode.min.js
 endef
 
 define Package/$(PKG_NAME)/postrm
