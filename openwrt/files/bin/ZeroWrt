@@ -166,10 +166,12 @@ show_menu() {
         color_output "\e[36m┃\e[0m  4. 恢复出厂设置                       \e[36m┃\e[0m"
         color_output "\e[36m┃\e[0m  5. 一键换源                           \e[36m┃\e[0m"
         color_output "\e[36m┃\e[0m  6. 一键部署                           \e[36m┃\e[0m"
-        color_output "\e[36m┃\e[0m  7. 一键加载驱动                       \e[36m┃\e[0m"          
-        color_output "\e[36m┃\e[0m  8. IPv6 开关 (仅适用于主路由)         \e[36m┃\e[0m"
-        color_output "\e[36m┃\e[0m  9. iStoreOS 风格化                    \e[36m┃\e[0m"    
-        color_output "\e[36m┃\e[0m  10. 检测更新                          \e[36m┃\e[0m"
+        color_output "\e[36m┃\e[0m  7. 一键加载驱动                       \e[36m┃\e[0m"
+        color_output "\e[36m┃\e[0m  8. IPv6 配置向导                      \e[36m┃\e[0m"                  
+        color_output "\e[36m┃\e[0m  9. 网络模式配置向导                   \e[36m┃\e[0m"
+        color_output "\e[36m┃\e[0m  10. iStoreOS 风格化                   \e[36m┃\e[0m" 
+        color_output "\e[36m┃\e[0m  11. 系统信息查询                      \e[36m┃\e[0m"           
+        color_output "\e[36m┃\e[0m  12. 检测更新                          \e[36m┃\e[0m"
         color_output "\e[36m┃\e[0m  0. 退出                               \e[36m┃\e[0m"
         color_output "\e[36m┃                                        ┃\e[0m"
         color_output "\e[36m┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\e[0m"
@@ -183,10 +185,12 @@ show_menu() {
         color_output "\e[36m┃\e[0m  4. Factory Reset                     \e[36m┃\e[0m"
         color_output "\e[36m┃\e[0m  5. Change Software Sources           \e[36m┃\e[0m"
         color_output "\e[36m┃\e[0m  6. One-click Deployment              \e[36m┃\e[0m"
-        color_output "\e[36m┃\e[0m  7. One-click loading of     drivers  \e[36m┃\e[0m" 
-        color_output "\e[36m┃\e[0m  8. IPv6 Toggle (Main Router Only)    \e[36m┃\e[0m"
-        color_output "\e[36m┃\e[0m  9. iStoreOS Styling                  \e[36m┃\e[0m"    
-        color_output "\e[36m┃\e[0m  10. Check for Updates                \e[36m┃\e[0m"
+        color_output "\e[36m┃\e[0m  7. One-click loading of     drivers  \e[36m┃\e[0m"
+        color_output "\e[36m┃\e[0m  8. IPv6-Wizard                       \e[36m┃\e[0m"         
+        color_output "\e[36m┃\e[0m  9. network_mode_wizard               \e[36m┃\e[0m"
+        color_output "\e[36m┃\e[0m  10. iStoreOS Styling                 \e[36m┃\e[0m"
+        color_output "\e[36m┃\e[0m  11. System information query         \e[36m┃\e[0m"    
+        color_output "\e[36m┃\e[0m  12. Check for Updates                \e[36m┃\e[0m"
         color_output "\e[36m┃\e[0m  0. Exit                              \e[36m┃\e[0m"
         color_output "\e[36m┃                                       ┃\e[0m"
         color_output "\e[36m┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\e[0m"
@@ -201,9 +205,11 @@ show_menu() {
         5) change_source ;;
         6) install_apps ;;
         7) Load_driver ;;
-        8) configure_ipv6 ;;
-        9) istore_style ;;
-        10) check_update ;;
+        8) ipv6_wizard ;;        
+        9) network_mode_wizard ;;
+        10) istore_style ;;
+        11) system_info ;;        
+        12) check_update ;;
         0) exit 0 ;;
         *) 
             if [[ "$LANG_CHOICE" == "zh" ]]; then
@@ -732,7 +738,7 @@ install_apps() {
                 # 检查 Gitea 容器是否已存在
                 if docker ps -a | grep -q "gitea"; then
                     if [[ "$LANG_CHOICE" == "zh" ]]; then
-                        color_output "\e[33mGitea-PostgreSQL 已经部署过，跳过部署！\e[0m"
+                        color_output "\e[33mGitea-MySQL 已经部署过，跳过部署！\e[0m"
                     else
                         color_output "\e[33mGitea-MySQL already deployed, skipping!\e[0m"
                     fi
@@ -748,6 +754,7 @@ install_apps() {
 
                 # 创建目录
                 mkdir -p /opt/Gitea
+                mkdir -p /opt/MySQL
 
                 # 下载 Docker Compose 文件到 /opt/gitea
                 curl -L https://git.kejizero.online/zhao/docker-compose/raw/branch/main/Gitea -o /opt/Gitea/docker-compose.yml
@@ -871,7 +878,6 @@ install_apps() {
     done
 }
 # 7. 加载驱动
-# 7. 一键加载所有驱动
 Load_driver() {
     while true; do
         clear
@@ -1232,30 +1238,12 @@ Load_driver() {
     done
 }
 
-# 8. IPv6 开关
-configure_ipv6() {
-    if [[ "$LANG_CHOICE" == "zh" ]]; then
-        color_output "\e[34m[IPv6 设置]\e[0m"
-    else
-        color_output "\e[34m[IPv6 Settings]\e[0m"
-    fi
-    
-    # 检查是否为 PPPoE 模式
-    local wan_proto=$(uci -q get network.wan.proto)
-    if [ "$wan_proto" != "pppoe" ]; then
-        if [[ "$LANG_CHOICE" == "zh" ]]; then
-            color_output "\e[31m错误: 无法开启 IPv6\e[0m"
-            color_output "\e[31m当前上网方式为: $wan_proto\e[0m"
-            color_output "\e[31m请先切换为 PPPoE 模式\e[0m"
-        else
-            color_output "\e[31mError: Cannot enable IPv6\e[0m"
-            color_output "\e[31mCurrent connection type: $wan_proto\e[0m"
-            color_output "\e[31mPlease switch to PPPoE mode first\e[0m"
-        fi
-        read -p "$([[ "$LANG_CHOICE" == "zh" ]] && echo "按 Enter 键返回菜单..." || echo "Press Enter to return to menu...")"
-        show_menu
-        return
-    fi
+# 8. IPv6 配置向导
+ipv6_wizard() {
+    echo
+    echo
+    echo
+    color_output "\e[34m[IPv6 配置向导]\e[0m" "\e[34m[IPv6 Configuration Wizard]\e[0m"
     
     # 检查当前状态
     local current_ra=$(uci -q get dhcp.lan.ra)
@@ -1265,111 +1253,538 @@ configure_ipv6() {
     
     if [ "$current_ra" = "server" ] && [ "$current_dhcpv6" = "server" ]; then
         status_text=$([[ "$LANG_CHOICE" == "zh" ]] && echo "已开启" || echo "Enabled")
+        status_color="\e[32m"
     else
         status_text=$([[ "$LANG_CHOICE" == "zh" ]] && echo "已关闭" || echo "Disabled")
+        status_color="\e[31m"
     fi
     
-    if [[ "$LANG_CHOICE" == "zh" ]]; then
-        color_output "\e[36m当前 IPv6 状态: $status_text\e[0m"
-        color_output "\e[36m请选择操作：\e[0m"
-        color_output "1. 开启 IPv6"
-        color_output "2. 关闭 IPv6"
-        color_output "0. 返回主菜单"
-    else
-        color_output "\e[36mCurrent IPv6 Status: $status_text\e[0m"
-        color_output "\e[36mSelect operation:\e[0m"
-        color_output "1. Enable IPv6"
-        color_output "2. Disable IPv6"
-        color_output "0. Back to Main Menu"
+    color_output "\e[36m$(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "当前 IPv6 状态:"; else echo "Current IPv6 Status:"; fi) $status_color$status_text\e[0m"
+    
+    # 检查是否为 PPPoE 模式
+    local wan_proto=$(uci -q get network.wan.proto)
+    if [ "$wan_proto" != "pppoe" ]; then
+        color_output "\e[33m$(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "注意: 当前上网方式为 $wan_proto，建议使用 PPPoE 模式获取 IPv6"; else echo "Note: Current connection type is $wan_proto, PPPoE is recommended for IPv6"; fi)\e[0m"
     fi
     
-    read -p "$([[ "$LANG_CHOICE" == "zh" ]] && echo "请输入选择 [0-2]: " || echo "Enter your choice [0-2]: ")" ipv6_choice
+    echo
+    color_output "\e[36m$(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "请选择操作："; else echo "Select operation:"; fi)\e[0m"
+    color_output "1. $(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "开启 IPv6 功能"; else echo "Enable IPv6"; fi)"
+    color_output "2. $(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "关闭 IPv6 功能"; else echo "Disable IPv6"; fi)"
+    color_output "3. $(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "高级 IPv6 设置"; else echo "Advanced IPv6 Settings"; fi)"
+    color_output "0. $(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "返回IPv6 配置向导"; else echo "Back to Wizard"; fi)"
+    
+    read -p "$(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "请输入选择 [0-3]: "; else echo "Enter your choice [0-3]: "; fi)" ipv6_choice
     
     case "$ipv6_choice" in
         1)
             # 开启 IPv6
-            # RA 服务设置为服务模式
-            uci set dhcp.lan.ra='server'
-            # DHCPv6 服务设置为服务模式
-            uci set dhcp.lan.dhcpv6='server'
-            # IPv6 分配长度设置为64
-            uci set dhcp.lan.ndp='64'
-            # 取消过滤 IPv6 AAAA 记录
-            uci set dhcp.@dnsmasq[0].filter_aaaa='0'
-            # 保存设置
-            uci commit dhcp
-            
-            # 重启相关服务（重定向输出）
-            /etc/init.d/odhcpd restart >/dev/null 2>&1
-            /etc/init.d/dnsmasq restart >/dev/null 2>&1
-            
-            if [[ "$LANG_CHOICE" == "zh" ]]; then
-                color_output "\e[32mIPv6 已开启！\e[0m"
-                color_output "\e[32m- RA 服务: 服务模式\e[0m"
-                color_output "\e[32m- DHCPv6 服务: 服务模式\e[0m"
-                color_output "\e[32m- IPv6 分配长度: 64\e[0m"
-                color_output "\e[32m- IPv6 AAAA 记录过滤: 已关闭\e[0m"
-            else
-                color_output "\e[32mIPv6 enabled!\e[0m"
-                color_output "\e[32m- RA Service: server\e[0m"
-                color_output "\e[32m- DHCPv6 Service: server\e[0m"
-                color_output "\e[32m- IPv6 Prefix Length: 64\e[0m"
-                color_output "\e[32m- IPv6 AAAA Filtering: disabled\e[0m"
-            fi
+            enable_ipv6
             ;;
-            
         2)
             # 关闭 IPv6
-            # RA 服务设置为已禁用
-            uci set dhcp.lan.ra='disabled'
-            # DHCPv6 服务设置为已禁用
-            uci set dhcp.lan.dhcpv6='disabled'
-            # IPv6 分配长度设置为已禁用
-            uci set dhcp.lan.ndp='disabled'
-            # 开启过滤 IPv6 AAAA 记录
-            uci set dhcp.@dnsmasq[0].filter_aaaa='1'
-            # 保存设置
-            uci commit dhcp
-            
-            # 重启相关服务（重定向输出）
-            /etc/init.d/odhcpd restart >/dev/null 2>&1
-            /etc/init.d/dnsmasq restart >/dev/null 2>&1
-            
-            if [[ "$LANG_CHOICE" == "zh" ]]; then
-                color_output "\e[32mIPv6 已关闭！\e[0m"
-                color_output "\e[32m- RA 服务: 已禁用\e[0m"
-                color_output "\e[32m- DHCPv6 服务: 已禁用\e[0m"
-                color_output "\e[32m- IPv6 分配长度: 已禁用\e[0m"
-                color_output "\e[32m- IPv6 AAAA 记录过滤: 已开启\e[0m"
-            else
-                color_output "\e[32mIPv6 disabled!\e[0m"
-                color_output "\e[32m- RA Service: disabled\e[0m"
-                color_output "\e[32m- DHCPv6 Service: disabled\e[0m"
-                color_output "\e[32m- IPv6 Prefix Length: disabled\e[0m"
-                color_output "\e[32m- IPv6 AAAA Filtering: enabled\e[0m"
-            fi
+            disable_ipv6
             ;;
-            
+        3)
+            # 高级设置
+            advanced_ipv6_settings
+            ;;
         0)
             show_menu
             return
             ;;
-            
         *)
-            if [[ "$LANG_CHOICE" == "zh" ]]; then
-                color_output "\e[31m无效选择\e[0m"
-            else
-                color_output "\e[31mInvalid choice\e[0m"
-            fi
+            color_output "\e[31m$(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "无效选择"; else echo "Invalid choice"; fi)\e[0m"
+            sleep 1
+            ipv6_wizard
+            return
             ;;
     esac
     
-    sleep 2
-    read -p "$([[ "$LANG_CHOICE" == "zh" ]] && echo "按 Enter 键返回菜单..." || echo "Press Enter to return to menu...")"
-    show_menu
+    ipv6_wizard
 }
 
-# 9. iStoreOS 风格化
+# 启用 IPv6 功能
+enable_ipv6() {
+    # RA 服务设置为服务模式
+    uci set dhcp.lan.ra='server'
+    # DHCPv6 服务设置为服务模式
+    uci set dhcp.lan.dhcpv6='server'
+    # IPv6 分配长度设置为64
+    uci set dhcp.lan.ndp='64'
+    # 取消过滤 IPv6 AAAA 记录
+    uci set dhcp.@dnsmasq[0].filter_aaaa='0'
+    # 保存设置
+    uci commit dhcp
+    
+    # 重启相关服务
+    /etc/init.d/odhcpd restart >/dev/null 2>&1
+    /etc/init.d/dnsmasq restart >/dev/null 2>&1
+    
+    color_output "\e[32m$(if [[ "$LANG_CHOICE" == "zh" ]]; then 
+        echo "IPv6 已开启！"
+        echo "- RA 服务: 服务模式"
+        echo "- DHCPv6 服务: 服务模式"
+        echo "- IPv6 分配长度: 64"
+        echo "- IPv6 AAAA 记录过滤: 已关闭"
+    else
+        echo "IPv6 enabled!"
+        echo "- RA Service: server"
+        echo "- DHCPv6 Service: server"
+        echo "- IPv6 Prefix Length: 64"
+        echo "- IPv6 AAAA Filtering: disabled"
+    fi)\e[0m"
+}
+
+# 禁用 IPv6 功能
+disable_ipv6() {
+    # RA 服务设置为已禁用
+    uci set dhcp.lan.ra='disabled'
+    # DHCPv6 服务设置为已禁用
+    uci set dhcp.lan.dhcpv6='disabled'
+    # IPv6 分配长度设置为已禁用
+    uci set dhcp.lan.ndp='disabled'
+    # 开启过滤 IPv6 AAAA 记录
+    uci set dhcp.@dnsmasq[0].filter_aaaa='1'
+    # 保存设置
+    uci commit dhcp
+    
+    # 重启相关服务
+    /etc/init.d/odhcpd restart >/dev/null 2>&1
+    /etc/init.d/dnsmasq restart >/dev/null 2>&1
+    
+    color_output "\e[32m$(if [[ "$LANG_CHOICE" == "zh" ]]; then 
+        echo "IPv6 已关闭！"
+        echo "- RA 服务: 已禁用"
+        echo "- DHCPv6 服务: 已禁用"
+        echo "- IPv6 分配长度: 已禁用"
+        echo "- IPv6 AAAA 记录过滤: 已开启"
+    else
+        echo "IPv6 disabled!"
+        echo "- RA Service: disabled"
+        echo "- DHCPv6 Service: disabled"
+        echo "- IPv6 Prefix Length: disabled"
+        echo "- IPv6 AAAA Filtering: enabled"
+    fi)\e[0m"
+}
+
+# 高级 IPv6 设置
+advanced_ipv6_settings() {
+    echo
+    color_output "\e[34m$(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "[高级 IPv6 设置]"; else echo "[Advanced IPv6 Settings]"; fi)\e[0m"
+    
+    # 获取当前设置
+    local current_ra=$(uci -q get dhcp.lan.ra)
+    local current_dhcpv6=$(uci -q get dhcp.lan.dhcpv6)
+    local current_ndp=$(uci -q get dhcp.lan.ndp)
+    local current_filter_aaaa=$(uci -q get dhcp.@dnsmasq[0].filter_aaaa)
+    
+    # 显示当前设置
+    color_output "\e[36m$(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "当前设置："; else echo "Current settings:"; fi)\e[0m"
+    color_output "1. RA: $current_ra"
+    color_output "2. DHCPv6: $current_dhcpv6"
+    color_output "3. NDP: $current_ndp"
+    color_output "4. Filter AAAA: $current_filter_aaaa"
+    
+    echo
+    color_output "\e[36m$(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "请选择要修改的选项："; else echo "Select option to modify:"; fi)\e[0m"
+    color_output "1. $(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "配置 RA 服务"; else echo "Configure RA service"; fi)"
+    color_output "2. $(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "配置 DHCPv6 服务"; else echo "Configure DHCPv6 service"; fi)"
+    color_output "3. $(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "配置 IPv6 前缀长度"; else echo "Configure IPv6 prefix length"; fi)"
+    color_output "4. $(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "配置 AAAA 记录过滤"; else echo "Configure AAAA record filtering"; fi)"
+    color_output "0. $(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "返回"; else echo "Back"; fi)"
+    
+    read -p "$(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "请输入选择 [0-4]: "; else echo "Enter your choice [0-4]: "; fi)" advanced_choice
+    
+    case "$advanced_choice" in
+        1)
+            configure_ra_service
+            ;;
+        2)
+            configure_dhcpv6_service
+            ;;
+        3)
+            configure_ndp
+            ;;
+        4)
+            configure_aaaa_filter
+            ;;
+        0)
+            return
+            ;;
+        *)
+            color_output "\e[31m$(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "无效选择"; else echo "Invalid choice"; fi)\e[0m"
+            ;;
+    esac
+    
+    # 保存并应用更改
+    uci commit dhcp
+    /etc/init.d/odhcpd restart >/dev/null 2>&1
+    /etc/init.d/dnsmasq restart >/dev/null 2>&1
+    
+    read -p "$(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "按 Enter 键继续..."; else echo "Press Enter to continue..."; fi)"
+    advanced_ipv6_settings
+}
+
+# 配置 RA 服务
+configure_ra_service() {
+    echo
+    color_output "\e[36m$(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "RA 服务选项："; else echo "RA Service Options:"; fi)\e[0m"
+    color_output "1. server - $(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "作为 RA 服务器"; else echo "Act as RA server"; fi)"
+    color_output "2. relay - $(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "作为 RA 中继"; else echo "Act as RA relay"; fi)"
+    color_output "3. disabled - $(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "禁用 RA 服务"; else echo "Disable RA service"; fi)"
+    color_output "0. $(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "取消"; else echo "Cancel"; fi)"
+    
+    read -p "$(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "请选择 RA 服务模式: "; else echo "Select RA service mode: "; fi)" ra_mode
+    
+    case "$ra_mode" in
+        1)
+            uci set dhcp.lan.ra='server'
+            color_output "\e[32m$(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "RA 服务已设置为服务器模式"; else echo "RA service set to server mode"; fi)\e[0m"
+            ;;
+        2)
+            uci set dhcp.lan.ra='relay'
+            color_output "\e[32m$(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "RA 服务已设置为中继模式"; else echo "RA service set to relay mode"; fi)\e[0m"
+            ;;
+        3)
+            uci set dhcp.lan.ra='disabled'
+            color_output "\e[32m$(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "RA 服务已禁用"; else echo "RA service disabled"; fi)\e[0m"
+            ;;
+        0)
+            return
+            ;;
+        *)
+            color_output "\e[31m$(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "无效选择"; else echo "Invalid choice"; fi)\e[0m"
+            ;;
+    esac
+}
+
+# 配置 DHCPv6 服务
+configure_dhcpv6_service() {
+    echo
+    color_output "\e[36m$(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "DHCPv6 服务选项："; else echo "DHCPv6 Service Options:"; fi)\e[0m"
+    color_output "1. server - $(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "作为 DHCPv6 服务器"; else echo "Act as DHCPv6 server"; fi)"
+    color_output "2. relay - $(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "作为 DHCPv6 中继"; else echo "Act as DHCPv6 relay"; fi)"
+    color_output "3. disabled - $(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "禁用 DHCPv6 服务"; else echo "Disable DHCPv6 service"; fi)"
+    color_output "0. $(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "取消"; else echo "Cancel"; fi)"
+    
+    read -p "$(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "请选择 DHCPv6 服务模式: "; else echo "Select DHCPv6 service mode: "; fi)" dhcpv6_mode
+    
+    case "$dhcpv6_mode" in
+        1)
+            uci set dhcp.lan.dhcpv6='server'
+            color_output "\e[32m$(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "DHCPv6 服务已设置为服务器模式"; else echo "DHCPv6 service set to server mode"; fi)\e[0m"
+            ;;
+        2)
+            uci set dhcp.lan.dhcpv6='relay'
+            color_output "\e[32m$(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "DHCPv6 服务已设置为中继模式"; else echo "DHCPv6 service set to relay mode"; fi)\e[0m"
+            ;;
+        3)
+            uci set dhcp.lan.dhcpv6='disabled'
+            color_output "\e[32m$(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "DHCPv6 服务已禁用"; else echo "DHCPv6 service disabled"; fi)\e[0m"
+            ;;
+        0)
+            return
+            ;;
+        *)
+            color_output "\e[31m$(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "无效选择"; else echo "Invalid choice"; fi)\e[0m"
+            ;;
+    esac
+}
+
+# 配置 NDP
+configure_ndp() {
+    echo
+    read -p "$(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "请输入 IPv6 前缀长度 (默认 64): "; else echo "Enter IPv6 prefix length (default 64): "; fi)" prefix_length
+    
+    if [[ -z "$prefix_length" ]]; then
+        prefix_length="64"
+    fi
+    
+    if [[ "$prefix_length" =~ ^[0-9]+$ ]] && [ "$prefix_length" -ge 48 ] && [ "$prefix_length" -le 128 ]; then
+        uci set dhcp.lan.ndp="$prefix_length"
+        color_output "\e[32m$(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "IPv6 前缀长度已设置为 $prefix_length"; else echo "IPv6 prefix length set to $prefix_length"; fi)\e[0m"
+    else
+        color_output "\e[31m$(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "无效的前缀长度 (48-128)"; else echo "Invalid prefix length (48-128)"; fi)\e[0m"
+    fi
+}
+
+# 配置 AAAA 记录过滤
+configure_aaaa_filter() {
+    echo
+    color_output "\e[36m$(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "AAAA 记录过滤选项："; else echo "AAAA Record Filtering Options:"; fi)\e[0m"
+    color_output "1. $(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "启用 AAAA 记录过滤"; else echo "Enable AAAA record filtering"; fi)"
+    color_output "2. $(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "禁用 AAAA 记录过滤"; else echo "Disable AAAA record filtering"; fi)"
+    color_output "0. $(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "取消"; else echo "Cancel"; fi)"
+    
+    read -p "$(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "请选择: "; else echo "Select option: "; fi)" aaaa_choice
+    
+    case "$aaaa_choice" in
+        1)
+            uci set dhcp.@dnsmasq[0].filter_aaaa='1'
+            color_output "\e[32m$(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "AAAA 记录过滤已启用"; else echo "AAAA record filtering enabled"; fi)\e[0m"
+            ;;
+        2)
+            uci set dhcp.@dnsmasq[0].filter_aaaa='0'
+            color_output "\e[32m$(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "AAAA 记录过滤已禁用"; else echo "AAAA record filtering disabled"; fi)\e[0m"
+            ;;
+        0)
+            return
+            ;;
+        *)
+            color_output "\e[31m$(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "无效选择"; else echo "Invalid choice"; fi)\e[0m"
+            ;;
+    esac
+}
+
+# 9. 网络模式配置向导
+network_mode_wizard() {
+    echo
+    color_output "\e[34m[网络模式配置向导]\e[0m" "\e[34m[Network Mode Configuration Wizard]\e[0m"
+    
+    # 获取当前WAN口配置
+    local current_proto=$(uci -q get network.wan.proto)
+    local current_username=$(uci -q get network.wan.username)
+    local current_ipaddr=$(uci -q get network.lan.ipaddr)
+    
+    # 显示当前配置
+    color_output "\e[36m$(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "当前网络配置："; else echo "Current network configuration:"; fi)\e[0m"
+    color_output "1. $(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "连接模式:"; else echo "Connection mode:"; fi) $current_proto"
+    
+    if [ "$current_proto" == "pppoe" ]; then
+        color_output "2. $(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "PPPoE账号:"; else echo "PPPoE username:"; fi) $current_username"
+    fi
+    
+    color_output "3. $(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "LAN IP地址:"; else echo "LAN IP address:"; fi) $current_ipaddr"
+    
+    echo
+    color_output "\e[36m$(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "请选择操作："; else echo "Select operation:"; fi)\e[0m"
+    color_output "1. $(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "配置PPPoE拨号"; else echo "Configure PPPoE"; fi)"
+    color_output "2. $(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "配置DHCP客户端"; else echo "Configure DHCP client"; fi)"
+    color_output "3. $(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "配置静态IP"; else echo "Configure static IP"; fi)"
+    color_output "4. $(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "高级网络设置"; else echo "Advanced network settings"; fi)"
+    color_output "0. $(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "返回主菜单"; else echo "Back to Main Menu"; fi)"
+    
+    read -p "$(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "请输入选择 [0-4]: "; else echo "Enter your choice [0-4]: "; fi)" mode_choice
+    
+    case "$mode_choice" in
+        1)
+            configure_pppoe
+            ;;
+        2)
+            configure_dhcp_client
+            ;;
+        3)
+            configure_static_ip
+            ;;
+        4)
+            advanced_network_settings
+            ;;
+        0)
+            show_menu
+            return
+            ;;
+        *)
+            color_output "\e[31m$(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "无效选择"; else echo "Invalid choice"; fi)\e[0m"
+            ;;
+    esac
+    
+    # 应用网络配置
+    uci commit network
+    /etc/init.d/network restart
+    
+    read -p "$(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "按Enter键返回网络向导..."; else echo "Press Enter to return to network wizard..."; fi)"
+    network_mode_wizard
+}
+
+# 配置PPPoE拨号
+configure_pppoe() {
+    echo
+    color_output "\e[34m$(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "[PPPoE配置]"; else echo "[PPPoE Configuration]"; fi)\e[0m"
+    
+    # 获取当前PPPoE配置
+    local current_username=$(uci -q get network.wan.username)
+    local current_password=$(uci -q get network.wan.password)
+    
+    # 显示当前配置（隐藏密码）
+    if [ -n "$current_username" ]; then
+        color_output "\e[36m$(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "当前PPPoE账号:"; else echo "Current PPPoE username:"; fi) $current_username\e[0m"
+        color_output "\e[36m$(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "当前PPPoE密码:"; else echo "Current PPPoE password:"; fi) ********\e[0m"
+    else
+        color_output "\e[33m$(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "未配置PPPoE"; else echo "PPPoE not configured"; fi)\e[0m"
+    fi
+    
+    echo
+    read -p "$(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "请输入PPPoE账号(留空保持不变): "; else echo "Enter PPPoE username (leave blank to keep current): "; fi)" pppoe_username
+    read -s -p "$(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "请输入PPPoE密码(留空保持不变): "; else echo "Enter PPPoE password (leave blank to keep current): "; fi)" pppoe_password
+    echo
+    
+    # 设置PPPoE配置
+    uci set network.wan.proto='pppoe'
+    [ -n "$pppoe_username" ] && uci set network.wan.username="$pppoe_username"
+    [ -n "$pppoe_password" ] && uci set network.wan.password="$pppoe_password"
+    
+    # 设置MTU和MRU（优化PPPoE连接）
+    uci set network.wan.mtu='1492'
+    uci set network.wan.mru='1492'
+    
+    color_output "\e[32m$(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "PPPoE配置已更新！"; else echo "PPPoE configuration updated!"; fi)\e[0m"
+    color_output "\e[32m$(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "连接模式已设置为PPPoE"; else echo "Connection mode set to PPPoE"; fi)\e[0m"
+}
+
+# 配置DHCP客户端
+configure_dhcp_client() {
+    echo
+    color_output "\e[34m$(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "[DHCP客户端配置]"; else echo "[DHCP Client Configuration]"; fi)\e[0m"
+    
+    # 设置DHCP客户端
+    uci set network.wan.proto='dhcp'
+    
+    # 清除PPPoE配置（如果存在）
+    uci delete network.wan.username >/dev/null 2>&1
+    uci delete network.wan.password >/dev/null 2>&1
+    
+    color_output "\e[32m$(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "DHCP客户端配置已更新！"; else echo "DHCP client configuration updated!"; fi)\e[0m"
+    color_output "\e[32m$(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "连接模式已设置为DHCP客户端"; else echo "Connection mode set to DHCP client"; fi)\e[0m"
+}
+
+# 配置静态IP
+configure_static_ip() {
+    echo
+    color_output "\e[34m$(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "[静态IP配置]"; else echo "[Static IP Configuration]"; fi)\e[0m"
+    
+    # 获取当前配置
+    local current_ip=$(uci -q get network.wan.ipaddr)
+    local current_netmask=$(uci -q get network.wan.netmask)
+    local current_gateway=$(uci -q get network.wan.gateway)
+    local current_dns=$(uci -q get network.wan.dns)
+    
+    # 显示当前配置
+    color_output "\e[36m$(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "当前静态IP配置："; else echo "Current static IP configuration:"; fi)\e[0m"
+    color_output "1. IP地址: ${current_ip:-未设置}"
+    color_output "2. 子网掩码: ${current_netmask:-未设置}"
+    color_output "3. 网关: ${current_gateway:-未设置}"
+    color_output "4. DNS服务器: ${current_dns:-未设置}"
+    
+    echo
+    read -p "$(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "请输入IP地址: "; else echo "Enter IP address: "; fi)" static_ip
+    read -p "$(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "请输入子网掩码(默认255.255.255.0): "; else echo "Enter netmask (default 255.255.255.0): "; fi)" static_netmask
+    read -p "$(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "请输入网关: "; else echo "Enter gateway: "; fi)" static_gateway
+    read -p "$(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "请输入DNS服务器(多个用空格分隔): "; else echo "Enter DNS servers (separate with spaces): "; fi)" static_dns
+    
+    # 设置默认值
+    [ -z "$static_netmask" ] && static_netmask="255.255.255.0"
+    
+    # 验证输入
+    if ! [[ $static_ip =~ ^([0-9]{1,3}\.){3}[0-9]{1,3}$ ]] || 
+       ! [[ $static_netmask =~ ^([0-9]{1,3}\.){3}[0-9]{1,3}$ ]] || 
+       ! [[ $static_gateway =~ ^([0-9]{1,3}\.){3}[0-9]{1,3}$ ]]; then
+        color_output "\e[31m$(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "无效的IP地址、子网掩码或网关"; else echo "Invalid IP address, netmask or gateway"; fi)\e[0m"
+        return
+    fi
+    
+    # 设置静态IP配置
+    uci set network.wan.proto='static'
+    uci set network.wan.ipaddr="$static_ip"
+    uci set network.wan.netmask="$static_netmask"
+    uci set network.wan.gateway="$static_gateway"
+    [ -n "$static_dns" ] && uci set network.wan.dns="$static_dns"
+    
+    color_output "\e[32m$(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "静态IP配置已更新！"; else echo "Static IP configuration updated!"; fi)\e[0m"
+}
+
+# 高级网络设置
+advanced_network_settings() {
+    echo
+    color_output "\e[34m$(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "[高级网络设置]"; else echo "[Advanced Network Settings]"; fi)\e[0m"
+    
+    # 获取当前MTU和DNS设置
+    local current_mtu=$(uci -q get network.wan.mtu)
+    local current_dns=$(uci -q get network.wan.dns)
+    local current_hostname=$(uci -q get system.@system[0].hostname)
+    
+    # 显示当前设置
+    color_output "\e[36m$(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "当前高级设置："; else echo "Current advanced settings:"; fi)\e[0m"
+    color_output "1. MTU: ${current_mtu:-默认}"
+    color_output "2. DNS服务器: ${current_dns:-默认}"
+    color_output "3. 主机名: ${current_hostname:-默认}"
+    
+    echo
+    color_output "\e[36m$(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "请选择要配置的选项："; else echo "Select option to configure:"; fi)\e[0m"
+    color_output "1. $(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "配置MTU"; else echo "Configure MTU"; fi)"
+    color_output "2. $(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "配置自定义DNS"; else echo "Configure custom DNS"; fi)"
+    color_output "3. $(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "配置主机名"; else echo "Configure hostname"; fi)"
+    color_output "0. $(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "返回"; else echo "Back"; fi)"
+    
+    read -p "$(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "请输入选择 [0-3]: "; else echo "Enter your choice [0-3]: "; fi)" advanced_choice
+    
+    case "$advanced_choice" in
+        1)
+            configure_mtu
+            ;;
+        2)
+            configure_custom_dns
+            ;;
+        3)
+            configure_hostname
+            ;;
+        0)
+        	  network_mode_wizard
+            return
+            ;;
+        *)
+            color_output "\e[31m$(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "无效选择"; else echo "Invalid choice"; fi)\e[0m"
+            ;;
+    esac
+    
+    # 保存并应用更改
+    uci commit network
+    uci commit system
+    
+    read -p "$(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "按Enter键继续..."; else echo "Press Enter to continue..."; fi)"
+    advanced_network_settings
+}
+
+# 配置MTU
+configure_mtu() {
+    echo
+    read -p "$(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "请输入MTU值(默认1500，PPPoE建议1492): "; else echo "Enter MTU value (default 1500, PPPoE recommends 1492): "; fi)" mtu_value
+    
+    if [[ "$mtu_value" =~ ^[0-9]+$ ]] && [ "$mtu_value" -ge 576 ] && [ "$mtu_value" -le 1500 ]; then
+        uci set network.wan.mtu="$mtu_value"
+        color_output "\e[32m$(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "MTU已设置为$mtu_value"; else echo "MTU set to $mtu_value"; fi)\e[0m"
+    else
+        color_output "\e[31m$(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "无效的MTU值(576-1500)"; else echo "Invalid MTU value (576-1500)"; fi)\e[0m"
+    fi
+}
+
+# 配置自定义DNS
+configure_custom_dns() {
+    echo
+    read -p "$(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "请输入DNS服务器(多个用空格分隔): "; else echo "Enter DNS servers (separate with spaces): "; fi)" dns_servers
+    
+    if [[ $dns_servers =~ ^([0-9]{1,3}\.){3}[0-9]{1,3}(\s+([0-9]{1,3}\.){3}[0-9]{1,3})*$ ]]; then
+        uci set network.wan.dns="$dns_servers"
+        color_output "\e[32m$(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "DNS服务器已更新"; else echo "DNS servers updated"; fi)\e[0m"
+    else
+        color_output "\e[31m$(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "无效的DNS格式"; else echo "Invalid DNS format"; fi)\e[0m"
+    fi
+}
+
+# 配置主机名
+configure_hostname() {
+    echo
+    read -p "$(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "请输入主机名: "; else echo "Enter hostname: "; fi)" new_hostname
+    
+    if [ -n "$new_hostname" ]; then
+        uci set system.@system[0].hostname="$new_hostname"
+        color_output "\e[32m$(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "主机名已设置为$new_hostname"; else echo "Hostname set to $new_hostname"; fi)\e[0m"
+    else
+        color_output "\e[31m$(if [[ "$LANG_CHOICE" == "zh" ]]; then echo "主机名不能为空"; else echo "Hostname cannot be empty"; fi)\e[0m"
+    fi
+}
+
+# 10. iStoreOS 风格化
 istore_style() {
     clear
     if [[ "$LANG_CHOICE" == "zh" ]]; then
@@ -1425,7 +1840,146 @@ istore_style() {
     show_menu
 }
 
-# 10. 检测更新
+# 11. 系统信息查询
+system_info() {
+    while true; do
+        clear
+        color_output "\e[38;5;39m+==== 系统信息查询 ====+\e[0m"
+        echo ""
+        color_output "\e[38;5;39m1)\e[0m \e[1;97m主机信息\e[0m"
+        color_output "\e[38;5;39m2)\e[0m \e[1;97m内存信息\e[0m"
+        color_output "\e[38;5;39m3)\e[0m \e[1;97m磁盘信息\e[0m"
+        color_output "\e[38;5;39m4)\e[0m \e[1;97m网络信息\e[0m"
+        color_output "\e[38;5;39m6)\e[0m \e[1;97m显示全部信息\e[0m"
+        color_output "\e[38;5;39m0)\e[0m \e[1;97m返回主菜单\e[0m"
+        echo ""
+        read -p "请选择要查看的信息 [0-6]: " choice
+
+        case $choice in
+            1) show_host_info ;;
+            2) show_memory_info ;;
+            3) show_disk_info ;;
+            4) show_network_info ;;
+            5) show_all_info ;;
+            0) # 返回主菜单
+            	 clear
+                show_menu
+                return
+                ;;
+            *) # 无效选项
+                if [[ "$LANG_CHOICE" == "zh" ]]; then
+                    color_output "\e[31m无效选项，请重新输入。\e[0m"
+                else
+                    color_output "\e[31mInvalid option, please try again.\e[0m"
+                fi
+                sleep 2
+                continue
+                ;;
+        esac
+    done
+}
+
+# 显示主机信息
+show_host_info() {
+    clear
+    color_output "\e[38;5;39m+---- [ 系统信息 ] ----+\e[0m"
+    
+    local hostname=$(cat /proc/sys/kernel/hostname 2>/dev/null || echo "Unknown")
+    local os_version=$(cat /etc/openwrt_release | grep DISTRIB_DESCRIPTION | cut -d "'" -f 2)
+    local kernel_version=$(uname -r)
+    local uptime=$(cat /proc/uptime | awk '{printf "%d天%d小时%d分钟", $1/86400, ($1%86400)/3600, ($1%3600)/60}')
+    local cpu_load=$(cat /proc/loadavg | awk '{print $1", "$2", "$3}')
+    
+    color_output "\e[38;5;39m|\e[0m \e[1;97m主机名\e[0m    : \e[38;5;220m$hostname\e[0m"
+    color_output "\e[38;5;39m|\e[0m \e[1;97m系统版本\e[0m  : \e[38;5;220m$os_version\e[0m"
+    color_output "\e[38;5;39m|\e[0m \e[1;97m内核版本\e[0m  : \e[38;5;220m$kernel_version\e[0m"
+    color_output "\e[38;5;39m|\e[0m \e[1;97m运行时间\e[0m  : \e[38;5;220m$uptime\e[0m"
+    
+    if command -v lscpu &> /dev/null; then
+        local cpu_arch=$(lscpu | grep 'Architecture' | awk '{print $2}')
+        local cpu_model=$(lscpu | grep 'Model name' | cut -d ':' -f 2 | sed 's/^[ \t]*//' | tr -s ' ')
+        local cpu_cores=$(lscpu | grep 'CPU(s):' | head -n 1 | awk '{print $2}')
+        local cpu_threads=$(lscpu | grep 'Thread(s) per core' | awk '{print $4}')
+        local cpu_max_mhz=$(lscpu | grep 'CPU max MHz' | awk '{print $4}')
+        
+        color_output "\e[38;5;39m|\e[0m \e[1;97mCPU架构\e[0m   : \e[38;5;220m$cpu_arch\e[0m"
+        color_output "\e[38;5;39m|\e[0m \e[1;97mCPU型号\e[0m   : \e[38;5;220m$cpu_model\e[0m"
+        color_output "\e[38;5;39m|\e[0m \e[1;97mCPU核心\e[0m   : \e[38;5;220m$cpu_cores 核心 $cpu_threads 线程\e[0m"
+        [ -n "$cpu_max_mhz" ] && color_output "\e[38;5;39m|\e[0m \e[1;97m最大频率\e[0m   : \e[38;5;220m$cpu_max_mhz MHz\e[0m"
+    else
+        color_output "\e[38;5;39m|\e[0m \e[1;97mCPU信息\e[0m   : \e[38;5;220m$(cat /proc/cpuinfo | grep 'model name' | head -n 1 | cut -d ':' -f 2 | sed 's/^[ \t]*//')\e[0m"
+    fi
+    
+    color_output "\e[38;5;39m|\e[0m \e[1;97mCPU负载\e[0m   : \e[38;5;220m$cpu_load\e[0m"
+    color_output "\e[38;5;39m+-------------------+\e[0m"
+    read -p "按 Enter 键继续..."
+}
+
+# 显示内存信息
+show_memory_info() {
+    clear
+    color_output "\e[38;5;39m+---- [ 内存信息 ] ----+\e[0m"
+    free -m | grep -v "Swap" | while read line; do
+        color_output "\e[38;5;39m|\e[0m \e[38;5;220m$line\e[0m"
+    done
+    color_output "\e[38;5;39m+-------------------+\e[0m"
+    read -p "按 Enter 键继续..."
+}
+
+# 显示磁盘信息
+show_disk_info() {
+    clear
+    color_output "\e[38;5;39m+---- [ 磁盘信息 ] ----+\e[0m"
+    df -h | grep -v "tmpfs" | while read line; do
+        color_output "\e[38;5;39m|\e[0m \e[38;5;220m$line\e[0m"
+    done
+    color_output "\e[38;5;39m+-------------------+\e[0m"
+    read -p "按 Enter 键继续..."
+}
+
+# 显示网络信息
+show_network_info() {
+    clear
+    color_output "\e[38;5;39m+---- [ 网络信息 ] ----+\e[0m"
+    
+    local lan_ip=$(uci get network.lan.ipaddr 2>/dev/null || ip addr show br-lan | grep -w inet | awk '{print $2}' | cut -d/ -f1)
+    local gateway=$(ip route | grep default | awk '{print $3}')
+    local dns_servers=$(cat /tmp/resolv.conf.auto 2>/dev/null | grep nameserver | awk '{print $2}' | tr '\n' ' ' || echo "Unknown")
+    
+    color_output "\e[38;5;39m|\e[0m \e[1;97mIP地址\e[0m    : \e[38;5;220m$lan_ip\e[0m"
+    color_output "\e[38;5;39m|\e[0m \e[1;97m网关\e[0m      : \e[38;5;220m$gateway\e[0m"
+    color_output "\e[38;5;39m|\e[0m \e[1;97mDNS\e[0m       : \e[38;5;220m$dns_servers\e[0m"
+    
+    if command -v ethtool &> /dev/null; then
+        color_output "\e[38;5;39m+---- [ 网卡状态 ] ----+\e[0m"
+        ip -o link show | awk -F': ' '{print $2}' | grep -v "lo" | while read iface; do
+            if [[ "$iface" != *"@"* ]]; then
+                local mac=$(ip link show $iface 2>/dev/null | grep -oE 'link/ether ([0-9a-fA-F:]{17})' | awk '{print $2}')
+                local link=$(ethtool $iface 2>/dev/null | grep -i "Link detected" | awk '{print $3}')
+                local speed=$(ethtool $iface 2>/dev/null | grep -i speed | awk '{print $2}')
+                local duplex=$(ethtool $iface 2>/dev/null | grep -i duplex | awk '{print $2}')
+                
+                color_output "\e[38;5;39m|\e[0m \e[1;97m接口\e[0m      : \e[38;5;220m$iface\e[0m"
+                [ -n "$mac" ] && color_output "\e[38;5;39m|\e[0m   \e[1;97mMAC\e[0m     : \e[38;5;220m$mac\e[0m"
+                [ -n "$link" ] && color_output "\e[38;5;39m|\e[0m   \e[1;97m状态\e[0m    : \e[38;5;220m$link\e[0m"
+                [ -n "$speed" ] && [ "$speed" != "Unknown!" ] && color_output "\e[38;5;39m|\e[0m   \e[1;97m速度\e[0m    : \e[38;5;220m$speed\e[0m"
+                [ -n "$duplex" ] && [ "$duplex" != "Unknown!" ] && color_output "\e[38;5;39m|\e[0m   \e[1;97m双工\e[0m    : \e[38;5;220m$duplex\e[0m"
+            fi
+        done
+    fi
+    color_output "\e[38;5;39m+-------------------+\e[0m"
+    read -p "按 Enter 键继续..."
+}
+
+# 显示所有信息
+show_all_info() {
+    show_host_info
+    show_memory_info
+    show_disk_info
+    show_network_info
+}
+
+# 12. 检测更新
 check_update() {
     if [[ "$LANG_CHOICE" == "zh" ]]; then
         color_output "\e[34m[检测更新]\e[0m"
