@@ -5,10 +5,10 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=daed
-PKG_VERSION:=2025.06.18
+PKG_VERSION:=2025.06.21
 DAED_VERSION:=daed-c3588a9
 WING_VERSION:=wing-6df3da2
-CORE_VERSION:=core-27f9d9b
+CORE_VERSION:=core-062d6b3
 WING_HASH_SHORT:=$(shell echo $(WING_VERSION) | cut -d- -f2)
 CORE_HASH_SHORT:=$(shell echo $(CORE_VERSION) | cut -d- -f2)
 PKG_RELEASE:=1
@@ -80,9 +80,7 @@ define Build/Prepare
 		wget -qO - https://github.com/daeuniverse/dae/pull/763.patch | patch -p1 ; \
 		wget -qO - https://github.com/daeuniverse/dae/pull/822.patch | patch -p1 ; \
 		wget -qO - https://github.com/daeuniverse/dae/pull/839.patch | patch -p1 ; \
-		wget -qO - https://github.com/LostAttractor/dae/commit/82058ae.patch | patch -p1 ; \
-		wget -qO - https://github.com/LostAttractor/dae/commit/585ccfb.patch | patch -p1 ; \
-		wget -qO - https://github.com/LostAttractor/dae/commit/77b54f2.patch | patch -p1 ; \
+		wget -qO - https://github.com/daeuniverse/dae/pull/845.patch | patch -p1 ; \
 		wget -qO - https://github.com/QiuSimons/luci-app-daed/raw/refs/heads/master/patchset/kix-feat_lockless_concurrency_udp_dns.patch | patch -p1 ; \
 		go mod tidy ; \
 		popd ; \
