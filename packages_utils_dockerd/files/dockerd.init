@@ -91,6 +91,9 @@ uciadd() {
 		uci_quiet set firewall.@zone[-1].output="ACCEPT"
 		uci_quiet set firewall.@zone[-1].forward="ACCEPT"
 		uci_quiet set firewall.@zone[-1].name="${zone}"
+		uci_quiet set firewall.dockerd=forwarding
+		uci_quiet set firewall.@forwarding[-1].src="${zone}"
+		uci_quiet set firewall.@forwarding[-1].dest='wan'
 		uci_quiet commit firewall
 	fi
 
@@ -190,6 +193,8 @@ process_config() {
 	config_get https_proxy proxies https_proxy "${https_proxy}"
 	config_get no_proxy proxies no_proxy "${no_proxy}"
 	config_get storage_driver globals storage_driver ""
+	config_get buildkit globals buildkit "0"
+	config_get experimental globals experimental "0"
 
 	. /usr/share/libubox/jshn.sh
 	json_init
@@ -197,6 +202,12 @@ process_config() {
 	json_add_string "log-level" "${log_level}"
 	json_add_boolean "iptables" "${iptables}"
 	json_add_boolean "ip6tables" "${ip6tables}"
+	[ "${buildkit}" = "1" ] && {
+		json_add_object 'features'
+		json_add_boolean "buildkit" "${buildkit}"
+		json_close_object
+	}
+	[ "${experimental}" = "1" ] && json_add_boolean "experimental" "${experimental}"
 	[ -z "${log_driver}" ] || json_add_string "log-driver" "${log_driver}"
 	[ -z "${bip}" ] || json_add_string "bip" "${bip}"
 	[ -z "${registry_mirrors}" ] || json_add_array "registry-mirrors"

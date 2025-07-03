@@ -13,7 +13,7 @@ PKG_HASH:=374f1c906b409cfad142b20d208f99e9539e5eb47fbb47ea541b4dfc9867345f
 
 PKG_MAINTAINER:=Gerard Ryan <G.M0N3Y.2503@gmail.com>
 
-PKG_BUILD_DEPENDS:=golang/host
+PKG_BUILD_DEPENDS:=golang/host dockerd
 PKG_BUILD_PARALLEL:=1
 PKG_INSTALL:=1
 PKG_BUILD_FLAGS:=no-mips16
@@ -36,8 +36,11 @@ define Package/containerd/description
 An industry-standard container runtime with an emphasis on simplicity, robustness and portability
 endef
 
-GO_PKG_BUILD_VARS += GO111MODULE=auto
-GO_PKG_INSTALL_ALL:=1
+GO_PKG_INSTALL_EXTRA:=\
+	vendor/google.golang.org/protobuf/internal/editiondefaults/editions_defaults.binpb \
+	Makefile \
+	vendor/modules.txt
+
 MAKE_PATH:=$(GO_PKG_WORK_DIR_NAME)/build/src/$(GO_PKG)
 MAKE_VARS += $(GO_PKG_VARS)
 MAKE_FLAGS += \
