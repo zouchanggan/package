@@ -1,6 +1,6 @@
 {
 	"admin/network/upnp": {
-		"title": "UPnP",
+		"title": "UPnP IGD & PCP",
 		"order": 62,
 		"action": {
 			"type": "view",
