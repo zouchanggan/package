@@ -11,7 +11,7 @@ PKG_NAME:=miniupnpd
 PKG_VERSION:=2.3.9
 PKG_RELEASE:=1
 
-PKG_SOURCE_URL:=https://miniupnp.tuxfamily.org/files
+PKG_SOURCE_URL:=http://miniupnp.free.fr/files
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_HASH:=66cb3c3d697ab2bb3a61d3c48628166d6ba328d7c2dbeb95898fdf2a3202af7b
 
